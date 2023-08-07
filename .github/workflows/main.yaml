@@ -45,12 +45,13 @@ jobs:
         run: |
           v=$(echo ${GITHUB_REF} | awk -F/ '{print substr($3,2,10);}')
           #go build -x -v -mod=vendor -ldflags "-X main.version=${v} -w -s" -o "wolweb_${GOOS}-${GOARCH}"
-          CGO_ENABLED=0 go build -x -v -trimpath -ldflags "-w -s -buildid=" -o "wolweb_${GOOS}-${GOARCH}"
+          CGO_ENABLED=0 go build -x -v -trimpath -ldflags "-w -s -buildid=" -o "wolweb"
+          tar -zcvf wolweb_${GOOS}-${GOARCH}.tar.gz wolweb static/ index.html config.json devices.json
 
       - name: Upload to artifact storage
         uses: actions/upload-artifact@v2
         with:
-          path: wolweb_${{ matrix.goos }}-${{ matrix.goarch }}
+          path: wolweb_${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
           if-no-files-found: error
           # only meant for sharing with the publish job
           retention-days: 1
